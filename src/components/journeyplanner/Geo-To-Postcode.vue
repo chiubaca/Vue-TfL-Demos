@@ -39,24 +39,14 @@ export default {
     };
   },
   computed: {
-      isSelectedClass:function(){
-          return{
-              inputA:this.isStartSelected,
-              inputB:this.isDestSelected
-          }
-      }
   },
   methods: {
     initMap: function() {
       var myIcon = L.icon({
         iconUrl: require("../../assets/iconA.png"),
         iconSize: [30, 30],
-        // iconAnchor: [22, 94],
-        // popupAnchor: [-0, -0],
-        // shadowUrl: "my-icon-shadow.png",
-        // shadowSize: [68, 95],
-        // shadowAnchor: [22, 94]
       });
+
       //Set starting point for the map
       let map = L.map("mapid").setView([51.505, -0.09], 13);
       //Set tile layer provider
@@ -65,15 +55,9 @@ export default {
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
 
-      L.circle([51.508, -0.11], {
-        color: "red",
-        fillColor: "#f03",
-        fillOpacity: 0.5,
-        radius: 500
-      }).addTo(map);
-
-      L.marker([51.5, -0.09], {icon: myIcon}).addTo(map);
-
+      L.marker([51.5, -0.1], {icon: myIcon}).addTo(map);
+      
+      //init map click events
       map.on("click", function(ev) {
         // L.marker(ev.latlng, {icon: myIcon}).addTo(map); // ev is an event object (MouseEvent in this case)
         
@@ -99,7 +83,7 @@ export default {
         
     },
     toggleDest: function() {
-                //if startIsSelected is false 
+        //if startIsSelected is false 
         if(this.isDestSelected === false){
             if(this.isStartSelected){
             this.isStartSelected = false;
@@ -121,16 +105,6 @@ export default {
 </script>
 
 <style scoped>
-/* @import url('../../../node_modules/leaflet/dist/leaflet.css'); */
-
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
 
 #mapid {
   height: 480px;
