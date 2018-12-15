@@ -57,9 +57,9 @@ export default {
 
       L.marker(this.pointA, {icon: this.myIcon}).addTo(this.map);     
       //init map click events
-    //   map.on("click", function(ev) {
-    //     L.marker(ev.latlng, {icon: myIcon}).addTo(map);
-    //   });
+      this.map.on("click", function(ev) {
+        L.marker(ev.latlng, {icon: this.myIcon}).addTo(this.map);
+      });
    
   }
 };
