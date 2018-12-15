@@ -9,8 +9,8 @@
   clicking/onhover on the points displaus information about the streetName-->
   <div>
     <div id="mapid"></div>
-    <div v-bind:class="{inputA:isStartSelected}" v-on:click="selectStart">Start: {{startPointer}}</div>
-    <div v-bind:class="{inputB:isDestSelected}" v-on:click="selectDest">Destination: {{destPointer}}</div>
+    <div v-bind:class="{inputA:isStartSelected}" v-on:click="toggleStart">Start: {{startPointer}}</div>
+    <div v-bind:class="{inputB:isDestSelected}" v-on:click="toggleDest">Destination: {{destPointer}}</div>
     <button>Search</button>
   </div>
 </template>
@@ -34,7 +34,7 @@ export default {
       count: 0,
       startPointer: "",
       destPointer: "",
-      isStartSelected: true,
+      isStartSelected: false,
       isDestSelected: true
     };
   },
@@ -65,7 +65,7 @@ export default {
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
 
-      let circle = L.circle([51.508, -0.11], {
+      L.circle([51.508, -0.11], {
         color: "red",
         fillColor: "#f03",
         fillOpacity: 0.5,
@@ -75,14 +75,43 @@ export default {
       L.marker([51.5, -0.09], {icon: myIcon}).addTo(map);
 
       map.on("click", function(ev) {
-        L.marker(ev.latlng, {icon: myIcon}).addTo(map); // ev is an event object (MouseEvent in this case)
+        // L.marker(ev.latlng, {icon: myIcon}).addTo(map); // ev is an event object (MouseEvent in this case)
+        
+        //check if isStartSelected and length is greater than 0
+            //make the click location = 
+      
       });
     },
     toggleStart: function() {
-      console.log("choose a starting point");
+        //if startIsSelected is false 
+        if(this.isStartSelected === false){
+            if(this.isDestSelected){
+            this.isDestSelected = false;
+            }
+        //make toggleStart true
+        this.isStartSelected = true;
+        }
+        //else if toggleStart is true
+        else if(this.isStartSelected){
+          //alert user to click on a location
+          alert("Click on a start location")
+        }
+        
     },
     toggleDest: function() {
-      console.log("choose a destination point");
+                //if startIsSelected is false 
+        if(this.isDestSelected === false){
+            if(this.isStartSelected){
+            this.isStartSelected = false;
+            }
+        //make toggleStart true
+        this.isDestSelected = true;
+        }
+        //else if toggleStart is true
+        else if(this.isDestSelected){
+          //alert user to click on a location
+          alert("Click on a destnation location")
+        }
     }
   },
   mounted() {
