@@ -19,10 +19,8 @@
       v-on:click="toggleDest"
     >Destination: {{destLocationCoords}}</div>
     <button v-on:click="search">Search</button>
-     <br>
-     <div v-if="isLoading">
-         Loading Journey....
-     </div>
+    <br>
+    <div v-if="isLoading">Loading Journey....</div>
     <!-- Journey Time: {{journeyObj.duration}} -->
   </div>
 </template>
@@ -58,11 +56,10 @@ export default {
       destLocationCoords: "51.49709527744871,-0.13732910156250003",
       isStartSelected: true,
       isDestSelected: false,
-      returnedSearchObj:{
-          journeysArr:[],
-
+      returnedSearchObj: {
+        journeysArr: []
       },
-      isLoading:false
+      isLoading: false
     };
   },
   computed: {
@@ -85,12 +82,12 @@ export default {
       }).addTo(this.map);
 
       //default starting points for A and B markers
-      this.pointA = L.marker([51.50863561745838,-0.10025024414062501], { icon: this.iconA }).addTo(
-        this.map
-      );
-      this.pointB = L.marker([51.49709527744871,-0.13732910156250003], { icon: this.iconB }).addTo(
-        this.map
-      );
+      this.pointA = L.marker([51.50863561745838, -0.10025024414062501], {
+        icon: this.iconA
+      }).addTo(this.map);
+      this.pointB = L.marker([51.49709527744871, -0.13732910156250003], {
+        icon: this.iconB
+      }).addTo(this.map);
 
       //init map click events
       this.map.on("click", ev => {
@@ -135,20 +132,39 @@ export default {
     },
     search: function() {
       this.isLoading = true;
-      console.log(`looking up : /${this.startLocationCoords}/to/${this.destLocationCoords}`)  
-      fetch(`https://api.tfl.gov.uk/journey/journeyresults/${this.startLocationCoords}/to/${this.destLocationCoords}`)
-        .then((response) => {
+      console.log(
+        `looking up : /${this.startLocationCoords}/to/${
+          this.destLocationCoords
+        }`
+      );
+      fetch(
+        `https://api.tfl.gov.uk/journey/journeyresults/${
+          this.startLocationCoords
+        }/to/${this.destLocationCoords}`
+      )
+        .then(response => {
           return response.json();
         })
-        .then((journeyJSON) => {
-            this.isLoading = false;
-        //   console.log(JSON.stringify(myJson));
-        // this.returnedSearchObj.journeysArr = journeyJSON.journeys
-        console.log(journeyJSON.journeys[0].legs[0].path);
-
+        .then(journeyJSON => {
+          this.isLoading = false;
+          //   console.log(JSON.stringify(myJson));
+          // this.returnedSearchObj.journeysArr = journeyJSON.journeys
+        //   console.log(journeyJSON.journeys)
+         
+          let journeyArr = journeyJSON.journeys
+          
+          //Test to display all routes into 1 line marker
+          for(let i in journeyArr){
+            //   console.log(journeyArr[i])
+            for (let y in journeyArr[i].legs){
+                console.log(journeyArr[i].legs[y].path.lineString)
+                let haha = JSON.parse(journeyArr[i].legs[y].path.lineString)
+                let A = L.polyline(haha, { color: "red" }).addTo(this.map);
+            } 
+          }
         
         })
-        .catch(error => console.error('Error:', error));;
+        .catch(error => console.error("Error:", error));
     }
   },
   mounted() {
