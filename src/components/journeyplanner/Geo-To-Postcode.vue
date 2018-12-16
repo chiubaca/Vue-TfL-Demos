@@ -20,8 +20,14 @@
     >Destination: {{destLocationCoords}}</div>
     <button v-on:click="search">Search</button>
     <br>
-    <div v-if="isLoading">Loading Journey....</div>
-    <!-- Journey Time: {{journeyObj.duration}} -->
+    <div v-if="isLoading">Loading Journeys....</div>
+    
+    <div class="journeys">
+        <div v-for="(journey, index) in journeysArr">  Journey Duration:  {{journey.duration}} {{index}}
+            <button v-on:click="drawRoute(index)">See Route</button> 
+        </div>
+    </div>
+    
   </div>
 </template>
 
@@ -56,9 +62,7 @@ export default {
       destLocationCoords: "51.49709527744871,-0.13732910156250003",
       isStartSelected: true,
       isDestSelected: false,
-      returnedSearchObj: {
-        journeysArr: []
-      },
+      journeysArr: [],
       isLoading: false
     };
   },
@@ -147,24 +151,37 @@ export default {
         })
         .then(journeyJSON => {
           this.isLoading = false;
-          //   console.log(JSON.stringify(myJson));
-          // this.returnedSearchObj.journeysArr = journeyJSON.journeys
-        //   console.log(journeyJSON.journeys)
-         
-          let journeyArr = journeyJSON.journeys
+          
+          //assign journeys to vue object     
+          this.journeysArr = journeyJSON.journeys    
+
+        //    console.log("vue journey array", this.journeysArr)
+        //    console.log(journeyArr[0].fare) 
           
           //Test to display all routes into 1 line marker
-          for(let i in journeyArr){
-            //   console.log(journeyArr[i])
-            for (let y in journeyArr[i].legs){
-                console.log(journeyArr[i].legs[y].path.lineString)
-                let haha = JSON.parse(journeyArr[i].legs[y].path.lineString)
-                let A = L.polyline(haha, { color: "red" }).addTo(this.map);
-            } 
-          }
+        //   for(let i in journeyArr){
+        //       console.log("fetch result:", journeyArr[i])
+        //       // generate a div for each object?
+        //       // clicking on the div generates the route on the fly?
+        //     for (let y in journeyArr[i].legs){
+        //         // console.log(journeyArr[i].legs[y])
+        //         let routeLine = JSON.parse(journeyArr[i].legs[y].path.lineString)
+        //         L.polyline(routeLine, { color: "red" }).addTo(this.map);
+        //     } 
+        //   }
         
         })
         .catch(error => console.error("Error:", error));
+    },
+    drawRoute: function(index){
+        console.log("drawing route")
+        console.log(index)
+        console.log(this.journeysArr[index].legs)
+          for (let y in this.journeysArr[index].legs){
+                // console.log(journeyArr[i].legs[y])
+                let routeLine = JSON.parse(this.journeysArr[index].legs[y].path.lineString)
+                L.polyline(routeLine, { color: "red" }).addTo(this.map);
+            } 
     }
   },
   mounted() {
