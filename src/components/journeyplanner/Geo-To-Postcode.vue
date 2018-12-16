@@ -10,12 +10,20 @@
   <div>
     <div id="mapid"></div>
 
-    <div v-bind:class="{inputA:isStartSelected}" v-on:click="toggleStart">Start: {{startLocation}}</div>
+    <div
+      v-bind:class="{inputA:isStartSelected}"
+      v-on:click="toggleStart"
+    >Start: {{startLocationCoords}}</div>
     <div
       v-bind:class="{inputB:isDestSelected}"
       v-on:click="toggleDest"
-    >Destination: {{destLocation}}</div>
-    <!-- <button v-on:click="test">Test</button> -->
+    >Destination: {{destLocationCoords}}</div>
+    <button v-on:click="search">Search</button>
+     <br>
+     <div v-if="isLoading">
+         Loading Journey....
+     </div>
+    <!-- Journey Time: {{journeyObj.duration}} -->
   </div>
 </template>
 
@@ -40,16 +48,21 @@ export default {
         iconUrl: require("../../assets/iconA.png"),
         iconSize: [30, 30]
       }),
-       iconB: L.icon({
+      iconB: L.icon({
         iconUrl: require("../../assets/iconB.png"),
         iconSize: [30, 30]
       }),
       pointA: {},
       pointB: {},
-      startLocation: "test",
-      destLocation: "",
+      startLocationCoords: "51.50863561745838,-0.10025024414062501",
+      destLocationCoords: "51.49709527744871,-0.13732910156250003",
       isStartSelected: true,
-      isDestSelected: false
+      isDestSelected: false,
+      returnedSearchObj:{
+          journeysArr:[],
+
+      },
+      isLoading:false
     };
   },
   computed: {
@@ -64,25 +77,29 @@ export default {
     initMap: function() {
       this.map = L.map("mapid");
       this.map.setView([51.505, -0.09], 13);
+
       //Set tile layer provider
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(this.map);
 
-      this.pointA = L.marker([51.505, -0.09], { icon: this.iconA }).addTo(this.map);
-      this.pointB = L.marker([51.505, -0.08], { icon: this.iconB }).addTo(this.map);
+      //default starting points for A and B markers
+      this.pointA = L.marker([51.50863561745838,-0.10025024414062501], { icon: this.iconA }).addTo(
+        this.map
+      );
+      this.pointB = L.marker([51.49709527744871,-0.13732910156250003], { icon: this.iconB }).addTo(
+        this.map
+      );
 
       //init map click events
       this.map.on("click", ev => {
         if (this.isStartSelected) {
-          this.startLocation = ev.latlng;
-          this.pointA.setLatLng(ev.latlng)
-     
-        } 
-        else if (this.isDestSelected) {
-          this.destLocation = ev.latlng;
-          this.pointB.setLatLng(ev.latlng)
+          this.startLocationCoords = `${ev.latlng.lat},${ev.latlng.lng}`;
+          this.pointA.setLatLng(ev.latlng);
+        } else if (this.isDestSelected) {
+          this.destLocationCoords = `${ev.latlng.lat},${ev.latlng.lng}`;
+          this.pointB.setLatLng(ev.latlng);
         }
       });
     },
@@ -115,6 +132,23 @@ export default {
         //alert user to click on a location
         alert("Click on a destnation location");
       }
+    },
+    search: function() {
+      this.isLoading = true;
+      console.log(`looking up : /${this.startLocationCoords}/to/${this.destLocationCoords}`)  
+      fetch(`https://api.tfl.gov.uk/journey/journeyresults/${this.startLocationCoords}/to/${this.destLocationCoords}`)
+        .then((response) => {
+          return response.json();
+        })
+        .then((journeyJSON) => {
+            this.isLoading = false;
+        //   console.log(JSON.stringify(myJson));
+        // this.returnedSearchObj.journeysArr = journeyJSON.journeys
+        console.log(journeyJSON.journeys[0].legs[0].path);
+
+        
+        })
+        .catch(error => console.error('Error:', error));;
     }
   },
   mounted() {
