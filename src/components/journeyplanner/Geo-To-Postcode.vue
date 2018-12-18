@@ -1,24 +1,37 @@
 <template>
-  <!-- place a two markers on a map
+  <!-- 
+    place a two markers on a map
     store  x and y coordinate on the two markers
     run the two coordinates through https://api.tfl.gov.uk/journey/journeyresults/51.501,-0.123/to/n225nb?app_id={{app_id}}&app_key={{app_key}}
     iterate through the legs array
     display all the path.lineString objects on the map canvas
     display all the departure point cooridanates on the map canvas
     clicking/onhover on the lines displays additional information about the steps
-  clicking/onhover on the points displaus information about the streetName-->
+    clicking/onhover on the points displaus information about the streetName
+  -->
   <div>
     <div id="mapid"></div>
 
     <div
       v-bind:class="{inputA:isStartSelected}"
-      v-on:click="toggleStart"
-    >Start: {{startLocationCoords}}</div>
+      v-on:click="toggleStart"> 
+      
+      Start Location: <input v-model="startLocationCoords"
+                  v-bind:placeholder="startLocationCoords"
+                   type="text">   
+     </div>
+
     <div
       v-bind:class="{inputB:isDestSelected}"
-      v-on:click="toggleDest"
-    >Destination: {{destLocationCoords}}</div>
+      v-on:click="toggleDest">
+      Destination:<input v-model="destLocationCoords"
+                  v-bind:placeholder="startLocationCoords"
+                   type="text"> 
+    </div>
+
     <button v-on:click="search">Search</button>
+
+
     <br>
     <div v-if="isLoading">Loading Journeys....</div>
     
@@ -63,6 +76,8 @@ export default {
       isStartSelected: true,
       isDestSelected: false,
       journeysArr: [],
+      // routeLineArr:[],
+      routeFeatureGroup: L.featureGroup(),
       isLoading: false
     };
   },
@@ -116,7 +131,7 @@ export default {
       //else if toggleStart is true
       else if (this.isStartSelected) {
         //alert user to click on a location
-        alert("Click on a start location");
+        console.log("Click on a start location");
       }
     },
     toggleDest: function() {
@@ -131,11 +146,15 @@ export default {
       //else if toggleStart is true
       else if (this.isDestSelected) {
         //alert user to click on a location
-        alert("Click on a destnation location");
+          console.log("Click on a destnation location");
       }
     },
     search: function() {
       this.isLoading = true;
+
+      console.log("delete old route if there is one")
+      this.routeFeatureGroup.clearLayers()
+      
       console.log(
         `looking up : /${this.startLocationCoords}/to/${
           this.destLocationCoords
@@ -150,38 +169,30 @@ export default {
           return response.json();
         })
         .then(journeyJSON => {
+            // console.log(journeyJSON)
           this.isLoading = false;
           
           //assign journeys to vue object     
           this.journeysArr = journeyJSON.journeys    
-
-        //    console.log("vue journey array", this.journeysArr)
-        //    console.log(journeyArr[0].fare) 
-          
-          //Test to display all routes into 1 line marker
-        //   for(let i in journeyArr){
-        //       console.log("fetch result:", journeyArr[i])
-        //       // generate a div for each object?
-        //       // clicking on the div generates the route on the fly?
-        //     for (let y in journeyArr[i].legs){
-        //         // console.log(journeyArr[i].legs[y])
-        //         let routeLine = JSON.parse(journeyArr[i].legs[y].path.lineString)
-        //         L.polyline(routeLine, { color: "red" }).addTo(this.map);
-        //     } 
-        //   }
         
         })
         .catch(error => console.error("Error:", error));
     },
     drawRoute: function(index){
+        console.log("delete old route")
+        this.routeFeatureGroup.clearLayers()
         console.log("drawing route")
-        console.log(index)
-        console.log(this.journeysArr[index].legs)
+        // console.log(this.journeysArr[index].legs)
           for (let y in this.journeysArr[index].legs){
-                // console.log(journeyArr[i].legs[y])
-                let routeLine = JSON.parse(this.journeysArr[index].legs[y].path.lineString)
-                L.polyline(routeLine, { color: "red" }).addTo(this.map);
+
+                //departPoint could be used to plot interchange locations
+                // let departPoint = this.journeysArr[index].legs[y].departurePoint
+
+                //All route lines are convert to a json object,converted to a leaflet line object, the added in
+                //as a new layer into a Feature Group object, this makes it easier to manage later
+                this.routeFeatureGroup.addLayer(L.polyline(JSON.parse(this.journeysArr[index].legs[y].path.lineString)) ) 
             } 
+      this.routeFeatureGroup.addTo(this.map)
     }
   },
   mounted() {
