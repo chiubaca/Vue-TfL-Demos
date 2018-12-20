@@ -12,35 +12,25 @@
   <div>
     <div id="mapid"></div>
 
-    <div
-      v-bind:class="{inputA:isStartSelected}"
-      v-on:click="toggleStart"> 
-      
-      Start Location: <input v-model="startLocationCoords"
-                  v-bind:placeholder="startLocationCoords"
-                   type="text">   
-     </div>
+    <div v-bind:class="{inputA:isStartSelected}" v-on:click="toggleStart">Start Location:
+      <input v-model="startLocationCoords" v-bind:placeholder="startLocationCoords" type="text">
+    </div>
 
-    <div
-      v-bind:class="{inputB:isDestSelected}"
-      v-on:click="toggleDest">
-      Destination:<input v-model="destLocationCoords"
-                  v-bind:placeholder="startLocationCoords"
-                   type="text"> 
+    <div v-bind:class="{inputB:isDestSelected}" v-on:click="toggleDest">Destination:
+      <input v-model="destLocationCoords" v-bind:placeholder="startLocationCoords" type="text">
     </div>
 
     <button v-on:click="search">Search</button>
 
-
     <br>
     <div v-if="isLoading">Loading Journeys....</div>
-    
+
     <div class="journeys">
-        <div v-for="(journey, index) in journeysArr">  Journey Duration:  {{journey.duration}} {{index}}
-            <button v-on:click="drawRoute(index)">See Route</button> 
-        </div>
+      <div v-for="(journey, index) in journeysArr">
+        Journey Duration: {{journey.duration}}
+        <button v-on:click="drawRoute(index)">See Route</button>
+      </div>
     </div>
-    
   </div>
 </template>
 
@@ -146,15 +136,15 @@ export default {
       //else if toggleStart is true
       else if (this.isDestSelected) {
         //alert user to click on a location
-          console.log("Click on a destnation location");
+        console.log("Click on a destnation location");
       }
     },
     search: function() {
       this.isLoading = true;
 
-      console.log("delete old route if there is one")
-      this.routeFeatureGroup.clearLayers()
-      
+      console.log("delete old route if there is one");
+      this.routeFeatureGroup.clearLayers();
+
       console.log(
         `looking up : /${this.startLocationCoords}/to/${
           this.destLocationCoords
@@ -169,30 +159,49 @@ export default {
           return response.json();
         })
         .then(journeyJSON => {
-            // console.log(journeyJSON)
+          // console.log(journeyJSON)
           this.isLoading = false;
-          
-          //assign journeys to vue object     
-          this.journeysArr = journeyJSON.journeys    
-        
+
+          //assign journeys to vue object
+          this.journeysArr = journeyJSON.journeys;
         })
         .catch(error => console.error("Error:", error));
     },
-    drawRoute: function(index){
-        console.log("delete old route")
-        this.routeFeatureGroup.clearLayers()
-        console.log("drawing route")
-        // console.log(this.journeysArr[index].legs)
-          for (let y in this.journeysArr[index].legs){
+    drawRoute: function(index) {
+      console.log("delete old route");
+      this.routeFeatureGroup.clearLayers();
+      console.log("drawing route");
+      // console.log(this.journeysArr[index].legs)
+      for (let y in this.journeysArr[index].legs) {
+        // this could be used to plot interchange locations
+        // let departPoint = this.journeysArr[index].legs[y].departurePoint
 
-                //departPoint could be used to plot interchange locations
-                // let departPoint = this.journeysArr[index].legs[y].departurePoint
-
-                //All route lines are convert to a json object,converted to a leaflet line object, the added in
-                //as a new layer into a Feature Group object, this makes it easier to manage later
-                this.routeFeatureGroup.addLayer(L.polyline(JSON.parse(this.journeysArr[index].legs[y].path.lineString)) ) 
-            } 
-      this.routeFeatureGroup.addTo(this.map)
+        //All route lines are convert to a json object,converted to a leaflet line object, the added in
+        //as a new layer into a Feature Group object, this makes it easier to manage later
+        let journeyRoute = JSON.parse(this.journeysArr[index].legs[y].path.lineString);
+        this.routeFeatureGroup
+        .addLayer(L.polyline(journeyRoute, 
+          {color: this.getRandomColour(),
+           weight: 6
+          })
+        .bindPopup(this.journeysArr[index].legs[y].instruction.detailed)
+        .on("mouseover ", function(evt){
+          this.openPopup(evt.latlng)
+        })
+        // .on("mouseout", function(){
+        //   this.closePopup()
+        // })
+        );
+      }
+      this.routeFeatureGroup.addTo(this.map);
+    },
+    getRandomColour: function() {
+      var letters = "0123456789ABCDEF";
+      var color = "#";
+      for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
     }
   },
   mounted() {
