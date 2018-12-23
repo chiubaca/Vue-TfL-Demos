@@ -81,6 +81,7 @@ export default {
       journeysArr: [],
       // routeLineArr:[],
       routeFeatureGroup: L.featureGroup(),
+      allRoutesFeatureGroup:L.featureGroup(),
       isLoading: false
     };
   },
@@ -164,7 +165,7 @@ export default {
 
       //delete old route if there is one
       this.routeFeatureGroup.clearLayers();
-
+      this.allRoutesFeatureGroup.clearLayers();
       console.log(
         `looking up : /${this.startLocationCoords}/to/${
           this.destLocationCoords
@@ -181,9 +182,22 @@ export default {
         .then(journeyJSON => {
           // console.log(journeyJSON)
           this.isLoading = false;
-
           //assign journeys to vue object
           this.journeysArr = journeyJSON.journeys;
+
+          //display all possible routes on the map
+
+          for(let i in this.journeysArr){
+              for (let j in this.journeysArr[i].legs){
+                let allRoutes = JSON.parse(this.journeysArr[i].legs[j].path.lineString);
+                this.allRoutesFeatureGroup.addLayer(
+                  L.polyline( allRoutes,  { color: "grey",
+                                           weight: 3, 
+                                          opacity:0.5
+                                          })
+                )}
+          }      
+                this.allRoutesFeatureGroup.addTo(this.map);
         })
         .catch(error => console.error("Error:", error));
     },
@@ -315,16 +329,13 @@ height: 400px
   justify-content: center;
   align-items: center;
   justify-content:space-evenly;
-    flex-wrap: wrap
+  flex-wrap: wrap
 
 }
 
 .journeys div{
     box-shadow: 0px 0px 13px #7d7d7d;
     padding: 1em;
-    margin:0.5em;
-   
+    margin:0.5em;  
 }
-
-
 </style>
