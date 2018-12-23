@@ -65,11 +65,11 @@ export default {
     return {
       map: {},
       iconA: L.icon({
-        iconUrl: require("../../assets/iconA.png"),
+        iconUrl: require("./../assets/iconA.png"),
         iconSize: [30, 30]
       }),
       iconB: L.icon({
-        iconUrl: require("../../assets/iconB.png"),
+        iconUrl: require("./../assets/iconB.png"),
         iconSize: [30, 30]
       }),
       pointA: {},

@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import basicJourneyPlanner from './components/journeyplanner/BasicJourneyPlanner.vue'
+import basicJourneyPlanner from './components/BasicJourneyPlanner.vue'
 
 export default {
   name: 'app',
