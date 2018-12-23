@@ -1,7 +1,7 @@
 <template>
   
   <div id="app">
-     
+  <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">    
     <geoToPostcode />
     
      
@@ -33,5 +33,7 @@ export default {
 </script>
 
 <style>
-
+*{
+  font-family: 'Nunito', sans-serif;
+}
 </style>
