@@ -1,4 +1,6 @@
-# tfl-demos
+# TFL Demos
+
+A few demos showcasing how TfL's Unified API can be used with Vue.js
 
 ## Project setup
 ```
