@@ -2,19 +2,19 @@
   
   <div id="app">
   <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">    
-    <geoToPostcode />
+    <basicJourneyPlanner />
     
      
   </div>
 </template>
 
 <script>
-import geoToPostcode from './components/journeyplanner/Geo-To-Postcode.vue'
+import basicJourneyPlanner from './components/journeyplanner/BasicJourneyPlanner.vue'
 
 export default {
   name: 'app',
   components: {
-    geoToPostcode
+    basicJourneyPlanner
   },
   data: function () {
     return {
