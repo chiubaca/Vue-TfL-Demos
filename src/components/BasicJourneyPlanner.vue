@@ -35,7 +35,7 @@
 
     <div id="map-container">
       <div id="loading-spinner" v-if="isLoading"></div>
-      <div id="mapid"></div>
+      <div id="journey-planner-map"></div>
     </div>
 
     <div class="journeys">
@@ -95,7 +95,7 @@ export default {
   },
   methods: {
     initMap: function() {
-      this.map = L.map("mapid");
+      this.map = L.map("journey-planner-map");
       this.map.setView([51.505, -0.09], 13);
 
       //Set tile layer provider
@@ -240,7 +240,7 @@ export default {
 </script>
 
 
-<style >
+<style scoped>
 #map-container{
     position: relative;
   box-shadow: 0px 0px 13px #7d7d7d;
@@ -248,7 +248,7 @@ export default {
   background: #3838ff
 }
 
-#mapid {
+#journey-planner-map {
 height: 400px
 }
 
