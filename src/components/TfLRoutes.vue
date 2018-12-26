@@ -6,7 +6,7 @@
     <div class="tube-buttons-container" v-for="(item, index) in tubeLines" :key="item.id">
       <div class="tube-buttons" v-bind:id="item" v-on:click="drawRoute(index)" >{{ item }}</div>
     </div>
-    <div id="mapid"></div>
+    <div id="tfl-routes-map"></div>
   </div>
 </template>
 
@@ -47,7 +47,7 @@ export default {
         });
     },
     initMap() {
-      this.map = L.map("mapid");
+      this.map = L.map("tfl-routes-map");
       this.map.setView([51.505, -0.09], 13);
 
       //Set tile layer provider
@@ -60,7 +60,7 @@ export default {
       ).addTo(this.map);
     },
     drawRoute(tubeName){
-      console.log(` Drawing ${this.tubeLines[tubeName]}`)
+      console.log(` Drawing ${tubeLines[tubeName]}`)
     }
   },
   mounted() {
@@ -104,6 +104,10 @@ export default {
     margin:0.5em;
     border-bottom-style: solid;
     border-color: black 
+}
+
+#tfl-routes-map{
+  height:350px;
 }
 
 </style>
