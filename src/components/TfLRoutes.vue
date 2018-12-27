@@ -3,7 +3,7 @@
   get tube meta data via /Line/Mode/tube/Route
   -->
   <div>
-    <div class="tube-buttons-container" v-for="(item, index) in tubeLines" :key="item.id">
+    <div class="tube-buttons-container" v-for="(item, index) in tubeLineNames" :key="item.id">
       <div class="tube-buttons" v-bind:id="item" v-on:click="drawRoute(index)" >{{ item }}</div>
     </div>
     <div id="tfl-routes-map"></div>
@@ -27,23 +27,16 @@ export default {
   data() {
     return {
       map: {},
-      tubeLines: []
+      tubeLineNames: []
     };
   },
   methods: {
-    getMetaData() {
+    getTubeLineNames() {
       fetch("https://api.tfl.gov.uk/Line/Mode/tube/Route")
-        .then(response => {
-          return response.json();
-        })
+        .then(response => response.json())
         .then(myJson => {
-          this.tubeLines = myJson.map(item => {
-            // console.log(item.id)
-            // this.tubeIDs.push(item.id)
-            return item.id;
-          });
-
-          console.log(this.tubeLines);
+          this.tubeLineNames = myJson.map(item => item.id);
+          console.log(this.tubeLineNames);
         });
     },
     initMap() {
@@ -60,12 +53,18 @@ export default {
       ).addTo(this.map);
     },
     drawRoute(tubeName){
-      console.log(` Drawing ${tubeLines[tubeName]}`)
+      console.log(` Drawing ${this.tubeLineNames[tubeName]}`)
+      fetch(`https://api.tfl.gov.uk/Line/${this.tubeLineNames[tubeName]}/route/sequence/outbound`)
+      .then(response => response.json())
+      .then(resonseJson => {
+    
+          console.log(resonseJson.lineStrings);
+        });
     }
   },
   mounted() {
     this.initMap();
-    this.getMetaData();
+    this.getTubeLineNames()
   }
 };
 </script>
