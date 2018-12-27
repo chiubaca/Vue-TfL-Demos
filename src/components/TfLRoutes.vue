@@ -27,7 +27,9 @@ export default {
   data() {
     return {
       map: {},
-      tubeLineNames: []
+      tubeLineNames: [],
+      tubeFeatureGroup: L.featureGroup(),
+      testGeoJSON: L.geoJSON()
     };
   },
   methods: {
@@ -57,9 +59,21 @@ export default {
       fetch(`https://api.tfl.gov.uk/Line/${this.tubeLineNames[tubeName]}/route/sequence/outbound`)
       .then(response => response.json())
       .then(resonseJson => {
-    
-          console.log(resonseJson.lineStrings);
+          
+          let lineArray = JSON.parse(resonseJson.lineStrings[0])
+          
+          let flipedLineString = lineArray[0].map(function(verticies){
+            verticies.push(verticies.shift()) 
+            return verticies
+          })
+        
+
+          // L.polyline( JSON.parse(resonseJson.lineStrings[0]) ,{ color: "red",weight: 3}).addTo(this.map)
+          this.tubeFeatureGroup.addLayer(
+                  L.polyline( flipedLineString ,{ color: "red",weight: 3})
+          );
         });
+       this.tubeFeatureGroup.addTo(this.map);  
     }
   },
   mounted() {
