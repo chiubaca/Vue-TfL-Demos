@@ -5,7 +5,7 @@
   clicking on button draws the tube line dynamically pulling a request via /Line/Mode/tube/Route/sequence/outbound
 
   Improvements
-  - handle bad data e.g northern line not returning any geometry
+  - handle bad data e.g northern and central line not returning any geometry
   - loading spinner
   - click /on hover information
   -->
@@ -158,11 +158,59 @@ export default {
 }
 
 .tube-buttons:hover{
+  --bakerloo:#894E24;
+  --central:#DC241F;
+  --circle:#FFCE00;
+  --district:#007229;
+  --hammersmith-city:#D799AF;
+  --jubilee:#751056;
+  --metropolitan:#751056;
+  --northern:#000000;
+  --piccadilly:#00A0E2;
+  --victoria:#FFCE00;
+  --waterloo-city:#00A0E2;
+
    box-shadow: 0px 0px 8px #7d7d7d;
     padding: 0.5em;
     margin:0.5em;
     border-bottom-style: solid;
-    border-color: black 
+ 
+}
+
+.tube-buttons#central:hover{
+   border-color:  var(--central)
+}
+
+.tube-buttons#bakerloo:hover{
+   border-color:  var(--bakerloo)
+}
+.tube-buttons#circle:hover{
+   border-color:  var(--circle)
+}
+.tube-buttons#district:hover{
+   border-color:  var(--district)
+}
+.tube-buttons#hammersmith-city:hover{
+   border-color:  var(--hammersmith-city)
+}
+.tube-buttons#jubilee:hover{
+   border-color:  var(--jubilee)
+}
+.tube-buttons#metropolitan:hover{
+   border-color:  var(--metropolitan)
+}
+
+.tube-buttons#northern:hover{
+   border-color:  var(--northern)
+}
+.tube-buttons#piccadilly:hover{
+   border-color:  var(--piccadilly)
+}
+.tube-buttons#victoria:hover{
+   border-color:  var(--victoria)
+}
+.tube-buttons#waterloo-city:hover{
+   border-color:  var(--waterloo-city)
 }
 
 #tfl-routes-map{
