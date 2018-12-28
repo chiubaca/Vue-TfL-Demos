@@ -52,7 +52,7 @@ export default {
           colour:"#D799AF"
         },
         "jubilee":{
-          colour:"#751056"
+          colour:"#6A7278"
         },
         "metropolitan":{
           colour:"#751056"
@@ -61,13 +61,13 @@ export default {
           colour:"#000000"
         },
         "piccadilly":{
-          colour:"#00A0E2"
+          colour:"#0019A8"
         },
         "victoria":{
-          colour:"#FFCE00"
+          colour:"#00A0E2"
         },
         "waterloo-city":{
-          colour:"#00A0E2"
+          colour:"#76D0BD"
         }
       },
       tubeFeatureGroup: L.featureGroup(),
@@ -130,19 +130,6 @@ export default {
 </script>
 
 <style scoped>
-:root {
-  --bakerloo:#894E24;
-  --central:#DC241F;
-  --circle:#FFCE00;
-  --district:#007229;
-  --hammersmith-city:#D799AF;
-  --jubilee:#751056;
-  --metropolitan:#751056;
-  --northern:#000000;
-  --piccadilly:#00A0E2;
-  --victoria:#FFCE00;
-  --waterloo-city:#00A0E2;
-}
 
 .tube-buttons-container{
   display: inline-flex;
@@ -163,12 +150,12 @@ export default {
   --circle:#FFCE00;
   --district:#007229;
   --hammersmith-city:#D799AF;
-  --jubilee:#751056;
+  --jubilee:#6A7278;
   --metropolitan:#751056;
   --northern:#000000;
-  --piccadilly:#00A0E2;
-  --victoria:#FFCE00;
-  --waterloo-city:#00A0E2;
+  --piccadilly:#0019A8;
+  --victoria:#00A0E2;
+  --waterloo-city:#76D0BD;
 
    box-shadow: 0px 0px 8px #7d7d7d;
     padding: 0.5em;
