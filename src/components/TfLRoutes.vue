@@ -1,10 +1,17 @@
 <template>
   <!-- 
-  get tube meta data via /Line/Mode/tube/Route
+  get tube meta data via Line/Mode/tube/Route
+  generate buttons from the meta data
+  clicking on button draws the tube line dynamically pulling a request via /Line/Mode/tube/Route/sequence/outbound
+
+  Improvements
+  - handle bad data e.g northern line not returning any geometry
+  - loading spinner
+  - click /on hover information
   -->
   <div>
     <div class="tube-buttons-container" v-for="(item, index) in tubeLineNames" :key="item.id">
-      <div class="tube-buttons" v-bind:id="item" v-on:click="drawRoute(index)" >{{ item }}</div>
+      <div class="tube-buttons" v-bind:id="item" v-on:click="drawRoute(index,item)" >{{ item }}</div>
     </div>
     <div id="tfl-routes-map"></div>
   </div>
@@ -28,6 +35,41 @@ export default {
     return {
       map: {},
       tubeLineNames: [],
+      tubeMetaData:{
+        "bakerloo":{
+          colour:"#894E24"
+        },
+        "central":{
+          colour:"#DC241F"
+        },
+        "circle":{
+          colour:"#FFCE00"
+        },
+        "district":{
+          colour:"#007229"
+        },
+        "hammersmith-city":{
+          colour:"#D799AF"
+        },
+        "jubilee":{
+          colour:"#751056"
+        },
+        "metropolitan":{
+          colour:"#751056"
+        },
+        "northern":{
+          colour:"#000000"
+        },
+        "piccadilly":{
+          colour:"#00A0E2"
+        },
+        "victoria":{
+          colour:"#FFCE00"
+        },
+        "waterloo-city":{
+          colour:"#00A0E2"
+        }
+      },
       tubeFeatureGroup: L.featureGroup(),
       testGeoJSON: L.geoJSON()
     };
@@ -54,26 +96,30 @@ export default {
         }
       ).addTo(this.map);
     },
-    drawRoute(tubeName){
-      console.log(` Drawing ${this.tubeLineNames[tubeName]}`)
-      fetch(`https://api.tfl.gov.uk/Line/${this.tubeLineNames[tubeName]}/route/sequence/outbound`)
+    drawRoute(tubeIndex){
+      let tubeNameLookup = this.tubeLineNames[tubeIndex];
+      console.log(`Drawing ${tubeNameLookup}`)
+
+      fetch(`https://api.tfl.gov.uk/Line/${tubeNameLookup}/route/sequence/outbound`)
       .then(response => response.json())
       .then(resonseJson => {
-          
+          //function to flip lat long around becasue tfl API has
+          //them the wrong way round and leaflet cant handle it
           let lineArray = JSON.parse(resonseJson.lineStrings[0])
-          
           let flipedLineString = lineArray[0].map(function(verticies){
             verticies.push(verticies.shift()) 
             return verticies
           })
-        
 
-          // L.polyline( JSON.parse(resonseJson.lineStrings[0]) ,{ color: "red",weight: 3}).addTo(this.map)
           this.tubeFeatureGroup.addLayer(
-                  L.polyline( flipedLineString ,{ color: "red",weight: 3})
+                  L.polyline( flipedLineString ,{ color: this.tubeMetaData[tubeNameLookup].colour ,
+                                                  weight: 3,
+                                                  opacity:0.5})
           );
-        });
-       this.tubeFeatureGroup.addTo(this.map);  
+        })
+        .catch(error => console.error("Error:", error));
+       this.tubeFeatureGroup.addTo(this.map);
+      //  console.log(this.tubeFeatureGroup.getLayers())  
     }
   },
   mounted() {
@@ -85,17 +131,17 @@ export default {
 
 <style scoped>
 :root {
-  --bakerloo:brown;
-  --central:brown;
-  --circle:brown;
-  --district:brown;
-  --hammersmith-city:brown;
-  --jubilee:brown;
-  --metropolitan:brown;
-  --northern:brown;
-  --piccadilly:brown;
-  --victoria:brown;
-  --waterloo-city:brown;
+  --bakerloo:#894E24;
+  --central:#DC241F;
+  --circle:#FFCE00;
+  --district:#007229;
+  --hammersmith-city:#D799AF;
+  --jubilee:#751056;
+  --metropolitan:#751056;
+  --northern:#000000;
+  --piccadilly:#00A0E2;
+  --victoria:#FFCE00;
+  --waterloo-city:#00A0E2;
 }
 
 .tube-buttons-container{
